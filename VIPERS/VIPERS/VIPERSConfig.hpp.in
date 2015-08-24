@@ -1,0 +1,87 @@
+/*
+ *  Video and Image Processing Environment for Real-time Systems (VIPERS)
+ *  Copyright (C) 2009 by Frederic Jean
+ *
+ *  VIPERS is a free library: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License,
+ *  or (at your option) any later version.
+ *
+ *  VIPERS is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with VIPERS.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Contact:
+ *  Computer Vision and Systems Laboratory
+ *  Department of Electrical and Computer Engineering
+ *  Universite Laval, Quebec, Canada, G1V 0A6
+ *  http://vision.gel.ulaval.ca
+ *
+ */
+
+/*!
+ * \file VIPERS/VIPERSConfig.hpp
+ * \brief Header with configuration of the library.  This file is updated by Cmake.
+ * \author Frederic Jean
+ * $Revision: 257 $
+ * $Date: 2009-10-17 21:08:30 -0400 (Sat, 17 Oct 2009) $
+ */
+
+#ifndef VIPERSCONFIG_HPP
+#define VIPERSCONFIG_HPP
+
+#define VIPERS_VERSION_MAJOR ${VIPERS_VERSION_MAJOR}
+#define VIPERS_VERSION_MINOR ${VIPERS_VERSION_MINOR}
+#define VIPERS_VERSION_PATCH ${VIPERS_VERSION_PATCH}
+#define VIPERS_VERSION "${VIPERS_VERSION}"
+#define VIPERS_SO_VERSION_CURRENT ${VIPERS_SO_VERSION_CURRENT}
+#define VIPERS_SO_VERSION_REVISION ${VIPERS_SO_VERSION_REVISION}
+#define VIPERS_SO_VERSION_AGE ${VIPERS_SO_VERSION_AGE}
+#define VIPERS_SO_VERSION "${VIPERS_SO_VERSION}"
+#define VIPERS_SVN_REVISION ${VIPERS_SVN_REVISION}
+#define VIPERS_VERSION_REVISION "${VIPERS_VERSION_REVISION}"
+
+#cmakedefine VIPERS_OS_WINDOWS
+#cmakedefine VIPERS_OS_APPLE
+#cmakedefine VIPERS_OS_UNIX
+#cmakedefine VIPERS_THREADS_WIN32
+#cmakedefine VIPERS_THREADS_POSIX
+
+#include <string>
+
+namespace VIPERS
+{
+	using namespace std;
+
+	//! Get VIPERS version currently used by the program calling this function
+	string getVersion();
+	//! Get the VIPERS major version number used by the program calling this function
+	unsigned int getVersionMajorNumber();
+	//! Get the VIPERS minor version number used by the program calling this function
+	unsigned int getVersionMinorNumber();
+	//! Get the VIPERS patch version number used by the program calling this function
+	unsigned int getVersionPatchNumber();
+	
+	//! Get the VIPERS Shared Object (SO) version used by the program calling this function
+	string getSOVersion();
+	//! Get the VIPERS Shared Object (SO) current version number used by the program calling this function
+	unsigned int getSOVersionCurrentNumber();
+	//! Get the VIPERS Shared Object (SO) revision version number used by the program calling this function
+	unsigned int getSOVersionRevisionNumber();
+	//! Get the VIPERS Shared Object (SO) age version number used by the program calling this function
+	unsigned int getSOVersionAgeNumber();
+
+	//! Get the VIPERS code revision number (Subversion revision number)
+	unsigned int getRevisionNumber();
+	//! Get the VIPERS version and revision string used by the program calling this function
+	string getVersionRevision();
+	
+	//! Get default modules path
+	string getModulesDefaultPath();
+}
+
+#endif //VIPERSCONFIG_HPP

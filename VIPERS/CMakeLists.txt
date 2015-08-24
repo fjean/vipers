@@ -1,0 +1,214 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+PROJECT(VIPERS C CXX)
+
+# ---------- VERSIONS ----------
+SET(VIPERS_VERSION_MAJOR  0)
+SET(VIPERS_VERSION_MINOR  8)
+SET(VIPERS_VERSION_PATCH  0)
+SET(VIPERS_VERSION ${VIPERS_VERSION_MAJOR}.${VIPERS_VERSION_MINOR}.${VIPERS_VERSION_PATCH})
+
+# ---------- SO VERSIONS ----------
+SET(VIPERS_SO_VERSION_CURRENT   1)
+SET(VIPERS_SO_VERSION_REVISION  0)
+SET(VIPERS_SO_VERSION_AGE       0)
+SET(VIPERS_SO_VERSION ${VIPERS_SO_VERSION_CURRENT}.${VIPERS_SO_VERSION_REVISION}.${VIPERS_SO_VERSION_AGE})
+#                   | | |
+#            +------+ | +---+
+#            |        |     |
+#         current:revision:age
+#            |        |     |
+#            |        |     +- increment if interfaces have been added
+#            |        |        set to zero if interfaces have been removed
+#            |        |        or changed
+#            |        +- increment if source code has changed
+#            |           set to zero if current is incremented
+#            +- increment if interfaces have been added, removed or changed
+
+# ---------- SVN REVISION ----------
+FIND_PACKAGE(Subversion)
+IF(Subversion_FOUND)
+  Subversion_WC_INFO(${PROJECT_SOURCE_DIR} VIPERS)
+  SET(VIPERS_SVN_REVISION ${VIPERS_WC_REVISION})
+  SET(VIPERS_VERSION_REVISION "${VIPERS_VERSION}-svn${VIPERS_SVN_REVISION}")
+  MESSAGE(STATUS "Current VIPERS library revision is ${VIPERS_SVN_REVISION}" )
+ELSE()
+  SET(VIPERS_SVN_REVISION "0")
+  SET(VIPERS_VERSION_REVISION ${VIPERS_VERSION})
+  MESSAGE(STATUS "VIPERS library revision could not be determined (subversion client not found)")
+ENDIF()
+
+# ---------- BUILD TYPE ----------
+IF( NOT CMAKE_BUILD_TYPE )
+  SET( CMAKE_BUILD_TYPE "Debug" )
+ENDIF()
+
+# ---------- OS DEFINITIONS AND OPTIONS----------
+IF(WIN32)
+
+  SET(VIPERS_OS_WINDOWS true)
+
+  # If MINGW, must add the "mthreads" directive for the compiler
+  IF(MINGW)
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mthreads")
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")    
+  ENDIF()
+
+  IF(NOT DEFINED VIPERSALL)
+    # Check for NSIS installer creator
+    FIND_PROGRAM(NSIS_PROG NSIS PATHS "C:/Program Files/NSIS")
+    if(NSIS_PROG MATCHES NSIS_PROG-NOTFOUND)
+      MESSAGE(STATUS "NSIS installer creator NOT FOUND; won't be able to create a Windows installer")      
+    ELSE()
+      MESSAGE(STATUS "NSIS installer creator FOUND")
+      OPTION(VIPERS_OPT_PKG_WINDOWS "Create a Windows installer for VIPERS library" ON)
+    ENDIF()
+  ENDIF()
+
+ELSEIF(APPLE)
+
+  SET(VIPERS_OS_APPLE true)
+  SET(VIPERS_OS_UNIX true)
+
+  IF(NOT DEFINED VIPERSALL)
+    OPTION(VIPERS_OPT_PKG_DMG "Create a disk image (.dmg) package" ON)
+  ENDIF()
+
+ELSEIF(UNIX)
+
+  SET(VIPERS_OS_UNIX true)
+
+  IF(NOT DEFINED VIPERSALL)
+    OPTION(VIPERS_OPT_PKG_DEB "Create a Debian (.deb) package" OFF)
+    OPTION(VIPERS_OPT_PKG_RPM "Create a RMP (.rmp) package" OFF)	
+    OPTION(VIPERS_OPT_PKG_BIN "Create a Unix self installer (.sh)?" ON)
+  ENDIF()
+
+ENDIF()
+
+# ---------- BUILD TYPE ----------
+IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  SET(VIPERS_DEBUG true)
+  ADD_DEFINITIONS(-DVIPERS_DEBUG)
+  MESSAGE(STATUS "VIPERS_DEBUG variable set")
+ELSEIF(CMAKE_BUILD_TYPE STREQUAL "Release") 
+  ADD_DEFINITIONS(-DPACC_NDEBUG)
+  MESSAGE(STATUS "PACC_NDEBUG variable set")  
+ENDIF()
+
+# ---------- THREAD LIBRAIRY DETECTION ----------
+INCLUDE(FindThreads)
+IF(CMAKE_USE_WIN32_THREADS_INIT)
+  SET(VIPERS_TARGETLINK_OPTIONS "ws2_32")
+  MESSAGE(STATUS "Using Windows threads: "  ${CMAKE_THREAD_LIBS_INIT})
+  SET(VIPERS_THREADS_WIN32 true)
+ELSEIF(CMAKE_USE_PTHREADS_INIT OR CMAKE_HP_PTHREADS_INIT)
+	SET(VIPERS_TARGETLINK_OPTIONS "pthread")
+  MESSAGE(STATUS "Using POSIX threads: "  ${CMAKE_THREAD_LIBS_INIT})
+  SET(VIPERS_THREADS_POSIX true)
+ELSE()
+  MESSAGE(SEND_ERROR "## Cannot find any thread library")
+ENDIF()
+
+# ---------- OPTIONS ----------
+OPTION(VIPERS_OPT_BUILD_DOC "Build VIPERS library documentation" OFF)
+
+# ---------- INCLUDES PATHS ----------
+INCLUDE_DIRECTORIES( ${PROJECT_SOURCE_DIR}/VIPERS )
+SET(VIPERS_FOUND true PARENT_SCOPE)
+SET(VIPERS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/VIPERS PARENT_SCOPE)
+SET(VIPERS_LIBRARIES "vipers" PARENT_SCOPE)
+
+# ---------- CONFIGURATION FILES ----------
+IF(VIPERSALL_BUNDLE)
+  SET(VIPERS_MODULES_DEFAULT_PATH "modules")
+ELSE()
+  SET(VIPERS_MODULES_DEFAULT_PATH "${CMAKE_INSTALL_PREFIX}/share/VIPERS/modules")
+ENDIF()
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/VIPERS/VIPERSConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/VIPERS/VIPERSConfig.hpp)
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/VIPERS/VIPERSConfig.cpp.in ${CMAKE_CURRENT_SOURCE_DIR}/VIPERS/VIPERSConfig.cpp)
+
+# ---------- SOURCE FILES ----------
+FILE(GLOB VIPERS_SOURCES VIPERS/*.cpp)
+FILE(GLOB VIPERS_HEADERS VIPERS/*.hpp)
+FILE(GLOB PACCUtil_SOURCES VIPERS/PACC/Util/*.cpp)
+FILE(GLOB PACCUtil_HEADERS VIPERS/PACC/Util/*.hpp)
+FILE(GLOB PACCXML_SOURCES VIPERS/PACC/XML/*.cpp)
+FILE(GLOB PACCXML_HEADERS VIPERS/PACC/XML/*.hpp)
+FILE(GLOB PACCThreading_SOURCES VIPERS/PACC/Threading/*.cpp)
+FILE(GLOB PACCThreading_HEADERS VIPERS/PACC/Threading/*.hpp)
+
+# ---------- BUILD DOCUMENTATION ----------
+IF(VIPERS_OPT_BUILD_DOC)
+  ADD_SUBDIRECTORY( doc )
+ENDIF()
+
+# ---------- CREATE LIBRARY ----------
+ADD_LIBRARY(vipers SHARED ${PACCUtil_SOURCES} ${PACCXML_SOURCES} ${PACCThreading_SOURCES} ${VIPERS_SOURCES})
+SET_TARGET_PROPERTIES(vipers PROPERTIES SOVERSION ${VIPERS_SO_VERSION})
+TARGET_LINK_LIBRARIES(vipers ${VIPERS_TARGETLINK_OPTIONS})
+
+# ---------- INSTALL LIBRARY ----------
+IF(VIPERSALL_BUNDLE)
+    INSTALL(TARGETS vipers DESTINATION bin COMPONENT libraries)
+ELSE()
+    INSTALL(TARGETS vipers DESTINATION lib COMPONENT libraries)
+ENDIF()
+
+INSTALL(FILES ${VIPERS_HEADERS} DESTINATION include/VIPERS COMPONENT headers)
+INSTALL(FILES ${PACCUtil_HEADERS} DESTINATION include/VIPERS/PACC/Util COMPONENT headers)
+INSTALL(FILES ${PACCXML_HEADERS} DESTINATION include/VIPERS/PACC/XML COMPONENT headers)
+INSTALL(FILES ${PACCThreading_HEADERS} DESTINATION include/VIPERS/PACC/Threading COMPONENT headers)
+
+SET(CPACK_COMPONENT_LIBRARIES_DISPLAY_NAME "Library (libvipers)" PARENT_SCOPE)
+SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "Dynamic runtime library needed by all VIPERS applications and modules.  This is the core of the VIPERS project." PARENT_SCOPE)
+SET(CPACK_COMPONENT_LIBRARIES_GROUP "Runtime" PARENT_SCOPE)
+SET(CPACK_COMPONENT_LIBRARIES_REQUIRED true PARENT_SCOPE)
+
+SET(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "Headers (libvipers)" PARENT_SCOPE)
+SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C++ Header files needed to build application using VIPERS library, as well as building VIPERS modules." PARENT_SCOPE)
+SET(CPACK_COMPONENT_HEADERS_GROUP "Development" PARENT_SCOPE)
+SET(CPACK_COMPONENT_HEADERS_DEPENDS libraries PARENT_SCOPE)
+
+# ---------- PACKAGE CREATION ----------
+IF(NOT DEFINED VIPERSALL)
+
+  IF(NOT DEFINED VIPERS_SOURCE_PACKAGE_TYPE)
+    SET(VIPERS_SOURCE_PACKAGE_TYPE "TGZ;ZIP" CACHE STRING "CPack source package type (TGZ, TZ, TBZ2, STGZ, ZIP)")
+  ENDIF()
+  IF(VIPERS_OPT_PKG_WINDOWS)
+    SET(CPACK_GENERATOR "NSIS")
+    MESSAGE(STATUS "Windows installer (.exe) will be created for VIPERS library")
+  ENDIF()
+  IF(VIPERS_OPT_PKG_DMG)
+    SET(CPACK_GENERATOR "PackageMaker")
+    MESSAGE(STATUS "Disk Image (.dmg) will be created for VIPERS library")
+  ENDIF()
+  IF(VIPERS_OPT_PKG_DEB)
+    SET(CPACK_GENERATOR ${CPACK_GENERATOR} "DEB")
+    MESSAGE(STATUS "Debian package (.deb) will be created for VIPERS library")
+  ENDIF()
+  IF(VIPERS_OPT_PKG_RPM)
+    SET(CPACK_GENERATOR ${CPACK_GENERATOR} "RPM")
+    MESSAGE(STATUS "RPM package (.rpm) will be created for VIPERS library")
+  ENDIF()
+  IF(VIPERS_OPT_PKG_BIN)
+    SET(CPACK_GENERATOR ${CPACK_GENERATOR} "STGZ")
+    MESSAGE(STATUS "Unix self installer (.sh) will be created for VIPERS library")
+  ENDIF()
+
+  SET( CPACK_PACKAGE_NAME libvipers )
+  SET( CPACK_RESOURCE_FILE_README ${CMAKE_CURRENT_SOURCE_DIR}/Readme.txt)
+  SET( CPACK_RESOURCE_FILE_LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/COPYING.LESSER)
+  SET( CPACK_PACKAGE_VERSION ${VIPERS_VERSION})
+  SET( CPACK_PACKAGE_VERSION_MAJOR ${VIPERS_VERSION_MAJOR})
+  SET( CPACK_PACKAGE_VERSION_MINOR ${VIPERS_VERSION_MINOR})
+  SET( CPACK_PACKAGE_VERSION_PATCH ${VIPERS_VERSION_PATCH})
+  SET( CPACK_SOURCE_GENERATOR ${VIPERS_SOURCE_PACKAGE_TYPE})
+  SET( CPACK_SOURCE_IGNORE_FILES "/Install.*/;/Build.*/;/\\\\.svn/;.*~$;.*VIPERSConfig.hpp$;.*VIPERSConfig.cpp$")
+  SET( CPACK_PACKAGE_CONTACT "Frederic Jean <fjean@gel.ulaval.ca>")
+  SET( CPACK_PACKAGE_DESCRIPTION_SUMMARY "VIPERS library is a Video and Image Processing Environment for Real-time Systems.  This package include the VIPERS library and its dependencies.")
+  INCLUDE( CPack )
+
+ENDIF()

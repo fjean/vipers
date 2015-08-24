@@ -1,0 +1,40 @@
+/*
+ *  Video and Image Processing Environment for Real-time Systems (VIPERS)
+ *	Testing Module
+ *  Copyright (C) 2009 by Frederic Jean
+ *
+ *  VIPERS is a free library: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License,
+ *  or (at your option) any later version.
+ *
+ *  VIPERS is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with VIPERS.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Contact:
+ *  Computer Vision and Systems Laboratory
+ *  Departement of Electrical and Computer Engineering
+ *  Universite Laval, Quebec, Canada, G1V 0A6
+ *  http://vision.gel.ulaval.ca
+ *
+ */
+
+/*!
+ * \file ImageDifferenceConfig.hpp
+ * \brief Header with configuration of the module.  This file is updated by Cmake.
+ * \author Frederic Jean
+ * $Revision: 19 $
+ * $Date: 2009-07-01 16:35:11 -0700 (Wed, 01 Jul 2009) $
+ */
+
+#ifndef IMAGEDIFFERENCEMODULE_CONFIG_HPP
+#define IMAGEDIFFERENCEMODULE_CONFIG_HPP
+
+#define IMAGEDIFFERENCEMODULE_VERSION "${IMAGEDIFFERENCE_MODULE_RELEASE_VERSION}"
+
+#endif //IMAGEDIFFERENCEMODULE_CONFIG_HPP

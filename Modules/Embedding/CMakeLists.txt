@@ -1,0 +1,37 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+PROJECT(EMBEDDING_MODULE)
+
+# This is the package release versioning info
+SET(EMBEDDING_MODULE_RELEASE_VERSION 0.1.0)
+
+# Find VIPERS library
+IF(NOT VIPERS_FOUND)
+  FIND_PACKAGE(VIPERS REQUIRED)
+ENDIF()
+INCLUDE_DIRECTORIES( ${VIPERS_INCLUDE_DIR} )
+
+# Find OpenCV
+IF(NOT OpenCV_INCLUDE_DIRS)
+  FIND_PACKAGE(OpenCV REQUIRED CV CXCORE HIGHGUI)
+ENDIF()
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+
+# Generate version.hpp file
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/EmbeddingConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/EmbeddingConfig.hpp)
+
+# Glob all sources and headers
+FILE(GLOB EmbeddingModuleSources *.cpp)
+FILE(GLOB EmbeddingModuleHeaders *.hpp)
+
+# Create target
+ADD_LIBRARY (embedding MODULE ${EmbeddingModuleSources})
+SET_TARGET_PROPERTIES(embedding PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(embedding ${VIPERS_LIBRARIES} ${OpenCV_LIBRARIES})
+
+# Install
+IF(VIPERSALL_BUNDLE)
+    INSTALL(TARGETS embedding DESTINATION bin/modules)
+ELSE()
+    INSTALL(TARGETS embedding DESTINATION share/VIPERS/modules)
+ENDIF()

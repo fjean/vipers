@@ -1,0 +1,117 @@
+/*
+ *  Video and Image Processing Environment for Real-time Systems (VIPERS)
+ *  Copyright (C) 2009 by Frederic Jean
+ *
+ *  VIPERS is a free library: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License,
+ *  or (at your option) any later version.
+ *
+ *  VIPERS is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with VIPERS.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Contact:
+ *  Computer Vision and Systems Laboratory
+ *  Department of Electrical and Computer Engineering
+ *  Universite Laval, Quebec, Canada, G1V 0A6
+ *  http://vision.gel.ulaval.ca
+ *
+ */
+
+/*!
+ * \file VIPERS/VIPERSConfig.cpp
+ * \brief Function for configuration of the library.  This file is updated by Cmake.
+ * \author Frederic Jean
+ * $Revision: 255 $
+ * $Date: 2009-10-17 19:58:59 -0400 (Sat, 17 Oct 2009) $
+ */
+
+#include "VIPERSConfig.hpp"
+
+namespace VIPERS
+{
+	using namespace std;
+
+	/*! \todo
+	*/
+	string getVersion()
+	{
+  	return "${VIPERS_VERSION}";
+	}
+
+	/*! \todo
+	*/
+	unsigned int getVersionMajorNumber()
+	{
+  	return ${VIPERS_VERSION_MAJOR};
+	}
+
+	/*! \todo
+	*/
+	unsigned int getVersionMinorNumber()
+	{
+  	return ${VIPERS_VERSION_MINOR};
+	}
+
+	/*! \todo
+	*/
+	unsigned int getVersionPatchNumber()
+	{  
+  	return ${VIPERS_VERSION_PATCH};
+	}
+
+	/*! \todo
+	*/
+	string getSOVersion()
+	{
+  	return "${VIPERS_SO_VERSION}";
+	}
+
+	/*! \todo
+	*/
+	unsigned int getSOVersionCurrentNumber()
+	{
+  	return ${VIPERS_SO_VERSION_CURRENT};
+	}
+
+	/*! \todo
+	*/
+	unsigned int getSOVersionRevisionNumber()
+	{
+  	return ${VIPERS_SO_VERSION_REVISION};
+	}
+
+	/*! \todo
+	*/
+	unsigned int getSOVersionAgeNumber()
+	{
+  	return ${VIPERS_SO_VERSION_AGE};
+	}
+
+	/*! \todo
+	*/
+	unsigned int getRevisionNumber()
+	{
+  	return ${VIPERS_SVN_REVISION};
+	}
+
+	/*! \todo
+	*/
+	string getVersionRevision()
+	{
+  	return "${VIPERS_VERSION_REVISION}";
+	}
+
+	/*! \todo
+	*/
+	string getModulesDefaultPath()
+	{
+	  return "${VIPERS_MODULES_DEFAULT_PATH}";
+	}
+
+};

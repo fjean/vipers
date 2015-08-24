@@ -1,0 +1,37 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+PROJECT(OPTICALFLOW_MODULE)
+
+# This is the package release versioning info
+SET(OPTICALFLOW_MODULE_RELEASE_VERSION 0.1.0)
+
+# Find VIPERS library
+IF(NOT VIPERS_FOUND)
+  FIND_PACKAGE(VIPERS REQUIRED)
+ENDIF()
+INCLUDE_DIRECTORIES( ${VIPERS_INCLUDE_DIR} )
+
+# Find OpenCV
+IF(NOT OpenCV_INCLUDE_DIRS)
+  FIND_PACKAGE(OpenCV REQUIRED CV CXCORE HIGHGUI)
+ENDIF()
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+
+# Generate version.hpp file
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/OpticalFlowConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/OpticalFlowConfig.hpp)
+
+# Glob all sources and headers
+FILE(GLOB OpticalFlowModuleSources *.cpp)
+FILE(GLOB OpticalFlowModuleHeaders *.hpp)
+
+# Create target
+ADD_LIBRARY (opticalflow MODULE ${OpticalFlowModuleSources})
+SET_TARGET_PROPERTIES(opticalflow PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(opticalflow ${VIPERS_LIBRARIES} ${OpenCV_LIBRARIES})
+
+# Install
+IF(VIPERSALL_BUNDLE)
+    INSTALL(TARGETS opticalflow DESTINATION bin/modules)
+ELSE()
+    INSTALL(TARGETS opticalflow DESTINATION share/VIPERS/modules)
+ENDIF()

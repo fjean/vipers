@@ -1,0 +1,39 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+PROJECT(IMAGEREADER_MODULE)
+
+# This is the package release versioning info
+SET(IMAGEWRITER_MODULE_RELEASE_VERSION 0.1.0)
+
+# Find VIPERS library
+IF(NOT VIPERS_FOUND)
+  FIND_PACKAGE(VIPERS REQUIRED)
+ENDIF()
+INCLUDE_DIRECTORIES( ${VIPERS_INCLUDE_DIR} )
+
+# Find OpenCV
+IF(NOT OpenCV_INCLUDE_DIRS)
+  FIND_PACKAGE(OpenCV REQUIRED CV CXCORE HIGHGUI)
+ENDIF()
+INCLUDE_DIRECTORIES( ${OpenCV_INCLUDE_DIRS} )
+
+# Generate version.hpp file
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/ImageWriterConfig.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/ImageWriterConfig.hpp)
+
+# Glob all sources and headers
+FILE(GLOB ImageWriterModuleSources *.cpp)
+FILE(GLOB ImageWriterModuleHeaders *.hpp)
+
+# Create target
+ADD_LIBRARY (imagewriter MODULE ${ImageWriterModuleSources})
+SET_TARGET_PROPERTIES(imagewriter PROPERTIES PREFIX "")
+TARGET_LINK_LIBRARIES(imagewriter ${VIPERS_LIBRARIES} ${OpenCV_LIBRARIES})
+
+# Install
+IF(VIPERSALL_BUNDLE)
+    INSTALL(TARGETS imagewriter DESTINATION bin/modules)
+    INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/icon/imagewriter.png DESTINATION bin/modules)
+ELSE()
+    INSTALL(TARGETS imagewriter DESTINATION share/VIPERS/modules)
+    INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/icon/imagewriter.png DESTINATION share/VIPERS/modules)
+ENDIF()

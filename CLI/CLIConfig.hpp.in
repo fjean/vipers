@@ -1,0 +1,44 @@
+/*
+ *  Video and Image Processing Environment for Real-time Systems CLI (VIPERSCLI)
+ *  Copyright (C) 2009 by Frederic Jean
+ *
+ *  VIPERSCLI is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published
+ *  by the Free Software Foundation, either version 3 of the License,
+ *  or (at your option) any later version.
+ *
+ *  VIPERSCLI is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with VIPERSCLI.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *  Contact:
+ *  Computer Vision and Systems Laboratory
+ *  Departement of Electrical and Computer Engineering
+ *  Universite Laval, Quebec, Canada, G1V 0A6
+ *  http://vision.gel.ulaval.ca
+ *
+ */
+
+/*!
+ * \file CLIConfig.hpp
+ * \brief Header with configuration of the CLI program.  This file is updated by CMake.
+ * \author Frederic Jean
+ * $Revision: 261 $
+ * $Date: 2009-10-18 16:02:27 -0400 (Sun, 18 Oct 2009) $
+ */
+
+#ifndef VIPERSCLICONFIG_HPP
+#define VIPERSCLICONFIG_HPP
+
+#define VIPERSCLI_VERSION "${VIPERSCLI_VERSION}"
+#define VIPERSCLI_VERSION_MAJOR ${VIPERSCLI_VERSION_MAJOR}
+#define VIPERSCLI_VERSION_MINOR ${VIPERSCLI_VERSION_MINOR}
+#define VIPERSCLI_VERSION_PATCH ${VIPERSCLI_VERSION_PATCH}
+#define VIPERSCLI_SVN_REVISION ${VIPERSCLI_SVN_REVISION}
+#define VIPERSCLI_VERSION_REVISION "${VIPERSCLI_VERSION_REVISION}"
+
+#endif //VIPERSCLICONFIG_HPP
